@@ -91,7 +91,7 @@ public class InstallationRestoreTest {
    }
 
    private Optional<Artifact> readArtifactFromManifest(String groupId, String artifactId) throws XmlException {
-      final File manifestFile = RESTORED_SERVER_PATH.resolve(InstallationMetadata.MANIFEST_FILE_NAME).toFile();
+      final File manifestFile = RESTORED_SERVER_PATH.resolve(InstallationMetadata.METADATA_DIR).resolve(InstallationMetadata.MANIFEST_FILE_NAME).toFile();
       return ManifestXmlSupport.parse(manifestFile).getArtifacts().stream().filter((a) -> a.getGroupId().equals(groupId) && a.getArtifactId().equals(artifactId)).findFirst();
    }
 }
