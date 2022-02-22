@@ -22,6 +22,7 @@ import com.redhat.prospero.api.InstallationMetadata;
 import com.redhat.prospero.api.MetadataException;
 import com.redhat.prospero.galleon.GalleonUtils;
 import com.redhat.prospero.galleon.ChannelMavenArtifactRepositoryManager;
+import com.redhat.prospero.wfchannel.RepositoryManager;
 import com.redhat.prospero.wfchannel.WfChannelMavenResolverFactory;
 import org.eclipse.aether.artifact.Artifact;
 import org.jboss.galleon.ProvisioningException;
@@ -66,7 +67,16 @@ public class InstallationRestore {
         final InstallationMetadata metadataBundle = InstallationMetadata.importMetadata(metadataBundleZip);
         final List<Channel> channels = mapToChannels(metadataBundle.getChannels());
 
-        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory();
+        //        try {
+        //            provisioningRepo = Files.createTempDirectory("provisioning-repo");
+        //            provisioningRepo.toFile().deleteOnExit();
+        //        } catch (IOException e) {
+        //            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
+        //        }
+        Path provisioningRepo = Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/");
+        final RepositoryManager repositoryManager = new RepositoryManager(provisioningRepo);
+
+        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory(repositoryManager);
         final ChannelMavenArtifactRepositoryManager repoManager = new ChannelMavenArtifactRepositoryManager(channels, factory, metadataBundle.getManifest());
 
         ProvisioningManager provMgr = GalleonUtils.getProvisioningManager(installDir, repoManager);

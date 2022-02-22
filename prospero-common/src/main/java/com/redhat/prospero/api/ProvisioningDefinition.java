@@ -19,6 +19,7 @@ package com.redhat.prospero.api;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.redhat.prospero.api.exceptions.ArtifactResolutionException;
-import com.redhat.prospero.wfchannel.WfChannelMavenResolver;
+import com.redhat.prospero.wfchannel.RepositoryManager;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.Artifact;
@@ -110,8 +111,9 @@ public class ProvisioningDefinition {
 
    public static Artifact resolveChannelFile(DefaultArtifact artifact,
                             RemoteRepository repo) throws ArtifactResolutionException {
-      final RepositorySystem repositorySystem = WfChannelMavenResolver.newRepositorySystem();
-      final DefaultRepositorySystemSession repositorySession = WfChannelMavenResolver.newRepositorySystemSession(repositorySystem, true, null);
+      final RepositoryManager repositoryManager = new RepositoryManager(Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/"));
+      final RepositorySystem repositorySystem = repositoryManager.newRepositorySystem();
+      final DefaultRepositorySystemSession repositorySession = repositoryManager.newRepositorySystemSession(repositorySystem, false);
 
       final VersionRangeRequest request = new VersionRangeRequest();
       request.setArtifact(artifact);

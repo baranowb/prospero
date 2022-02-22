@@ -6,6 +6,7 @@ import com.redhat.prospero.actions.Update;
 import com.redhat.prospero.api.ProvisioningDefinition;
 import com.redhat.prospero.cli.CliConsole;
 import com.redhat.prospero.galleon.ChannelMavenArtifactRepositoryManager;
+import com.redhat.prospero.wfchannel.RepositoryManager;
 import com.redhat.prospero.wfchannel.WfChannelMavenResolverFactory;
 import org.jboss.galleon.ProvisioningException;
 import org.jboss.galleon.universe.FeaturePackLocation;
@@ -50,7 +51,17 @@ public class ChannelUpdaterTest {
                 throw new RuntimeException(e);
             }
         }).collect(Collectors.toList());
-        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory();
+        //        try {
+        //            provisioningRepo = Files.createTempDirectory("provisioning-repo");
+        //            provisioningRepo.toFile().deleteOnExit();
+        //        } catch (IOException e) {
+        //            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
+        //        }
+        Path provisioningRepo = Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/");
+
+        final RepositoryManager repositoryManager = new RepositoryManager(provisioningRepo);
+
+        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory(repositoryManager);
         final ChannelMavenArtifactRepositoryManager repoManager = new ChannelMavenArtifactRepositoryManager(channels, factory);
 
 
@@ -91,7 +102,16 @@ public class ChannelUpdaterTest {
 
     @Test
     public void eap74() throws Exception {
-        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory();
+        //        try {
+        //            provisioningRepo = Files.createTempDirectory("provisioning-repo");
+        //            provisioningRepo.toFile().deleteOnExit();
+        //        } catch (IOException e) {
+        //            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
+        //        }
+        Path provisioningRepo = Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/");
+        final RepositoryManager repositoryManager = new RepositoryManager(provisioningRepo);
+
+        final WfChannelMavenResolverFactory factory = new WfChannelMavenResolverFactory(repositoryManager);
 
         final URL wlflUrl = new URL("file:///Users/spyrkob/workspaces/set/prospero/prospero/examples/eap/wildfly-ee-galleon-pack-7.4.3.GA-redhat-SNAPSHOT-channel.yaml");
         Channel primaryChannel = ChannelMapper.from(wlflUrl);

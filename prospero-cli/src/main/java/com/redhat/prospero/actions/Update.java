@@ -20,6 +20,7 @@ package com.redhat.prospero.actions;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,7 @@ import com.redhat.prospero.galleon.GalleonUtils;
 import com.redhat.prospero.galleon.ChannelMavenArtifactRepositoryManager;
 import com.redhat.prospero.api.ChannelRef;
 import com.redhat.prospero.api.Manifest;
+import com.redhat.prospero.wfchannel.RepositoryManager;
 import com.redhat.prospero.wfchannel.WfChannelMavenResolverFactory;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
@@ -67,7 +69,16 @@ public class Update {
     public Update(Path installDir, Console console) throws ProvisioningException, MetadataException {
         this.metadata = new InstallationMetadata(installDir);
         final List<Channel> channels = mapToChannels(metadata.getChannels());
-        this.factory = new WfChannelMavenResolverFactory();
+        //        try {
+        //            provisioningRepo = Files.createTempDirectory("provisioning-repo");
+        //            provisioningRepo.toFile().deleteOnExit();
+        //        } catch (IOException e) {
+        //            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
+        //        }
+        Path provisioningRepo = Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/");
+        final RepositoryManager repositoryManager = new RepositoryManager(provisioningRepo);
+
+        factory = new WfChannelMavenResolverFactory(repositoryManager);
         this.channelSession = new ChannelSession(channels, factory);
         this.maven = new ChannelMavenArtifactRepositoryManager(channelSession);
         this.provMgr = GalleonUtils.getProvisioningManager(installDir, maven);

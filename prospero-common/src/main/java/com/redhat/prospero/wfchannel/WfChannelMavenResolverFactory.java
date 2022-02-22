@@ -24,24 +24,29 @@ import org.wildfly.channel.spi.MavenVersionsResolver;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 public class WfChannelMavenResolverFactory implements MavenVersionsResolver.Factory {
 
     private final Path provisioningRepo;
+    private final RepositoryManager repositoryManager;
 
-    public WfChannelMavenResolverFactory() throws ProvisioningException {
-        try {
-            provisioningRepo = Files.createTempDirectory("provisioning-repo");
-            provisioningRepo.toFile().deleteOnExit();
-        } catch (IOException e) {
-            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
-        }
+    public WfChannelMavenResolverFactory(RepositoryManager repositoryManager) throws ProvisioningException {
+        this.repositoryManager = repositoryManager;
+//        try {
+//            provisioningRepo = Files.createTempDirectory("provisioning-repo");
+//            provisioningRepo.toFile().deleteOnExit();
+//        } catch (IOException e) {
+//            throw new ProvisioningException("Unable to create provisioning repository folder.", e);
+//        }
+        provisioningRepo = Paths.get("/Users/spyrkob/workspaces/set/prospero/debug/provision-repo/");
     }
 
     @Override
     public MavenVersionsResolver create(List<MavenRepository> mavenRepositories, boolean resolveLocalCache) {
-        return new WfChannelMavenResolver(mavenRepositories, resolveLocalCache, provisioningRepo);
+        return new WfChannelMavenResolver(mavenRepositories, resolveLocalCache, repositoryManager);
     }
 
     public Path getProvisioningRepo() {
